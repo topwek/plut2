@@ -1,2 +1,1 @@
-fastecdsa
-six
+starkbank-ecdsa==0.1.4
