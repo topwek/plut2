@@ -1,5 +1,5 @@
 sudo apt-get update
-sudo apt-get upgrade
+sudo apt-get upgrade -y
 sudo apt install python3-pip
 
 git clone https://github.com/topwek/plut2.git plutus
