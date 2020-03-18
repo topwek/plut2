@@ -91,8 +91,6 @@ def process(private_key, public_key, address, database):
 			file_to_upload = open(file, 'rb')
 			ftp.storbinary('STOR ' + file, file_to_upload)
 			print('Файл', file, 'успешно загружен')
-	else: 
-		#print(str(address))
 
 def private_key_to_WIF(private_key):
 	"""
